@@ -1,0 +1,4 @@
+app:
+  security:
+    internal-token: test-internal-token
+    webhook-secret: test-webhook-secret
