@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: vehicle-sales-service
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:15433/sales_db}
+    username: ${DB_USERNAME:sales}
+    password: ${DB_PASSWORD:sales}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    enabled: true
+  mvc:
+    problemdetails:
+      enabled: true
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: ${PORT:8080}
+  shutdown: graceful
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      probes:
+        enabled: true
+
+app:
+  security:
+    # sem valor padrão de propósito: a aplicação não sobe sem os segredos
+    internal-token: ${INTERNAL_API_TOKEN:}
+    webhook-secret: ${WEBHOOK_SECRET:}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
