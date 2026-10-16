@@ -126,9 +126,9 @@ SALES_DB_PASSWORD=<senha> INTERNAL_API_TOKEN=<token> WEBHOOK_SECRET=<segredo> \
 KUBE_CONTEXT=minikube ./scripts/deploy.sh
 ```
 
-> **Senha do banco:** o PostgreSQL só aplica `SALES_DB_PASSWORD` na primeira inicialização do volume. Para trocar a
-> senha depois, recrie o volume (`kubectl -n vehicle-platform delete statefulset sales-db && kubectl -n vehicle-platform delete pvc data-sales-db-0`)
-> e rode o deploy de novo.
+> **Senha do banco:** o PostgreSQL só lê a senha ao criar o volume; por isso o `deploy.sh` alinha a senha do
+> banco com o Secret (`ALTER USER`) a cada execução. Para trocar a senha, basta atualizar o secret `SALES_DB_PASSWORD`
+> e rodar o CD de novo.
 
 **Demonstração do autoescalonamento:** `KUBE_CONTEXT=minikube ./scripts/load-test.sh 6 120` sobe 6 pods que
 consultam a vitrine sem parar e mostra o HPA reagindo. No teste local, as réplicas foram de 2 para 4 quando a CPU
