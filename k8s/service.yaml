@@ -1,0 +1,17 @@
+# Dentro do cluster: http://vehicle-sales-service (usado pelo serviço principal).
+# Fora do cluster: NodePort 30082 (minikube service ... --url) ou kubectl port-forward.
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicle-sales-service
+  labels:
+    app: vehicle-sales-service
+spec:
+  type: NodePort
+  selector:
+    app: vehicle-sales-service
+  ports:
+    - name: http
+      port: 80
+      targetPort: http
+      nodePort: 30082
