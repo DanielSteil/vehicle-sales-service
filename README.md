@@ -139,7 +139,7 @@ chegou a 121%.
 | Workflow | Gatilho | O que faz |
 |---|---|---|
 | [`ci.yml`](.github/workflows/ci.yml) | Pull Request para a `main` | `mvn verify` (testes, Testcontainers, trava de 80%), resumo da cobertura no PR, relatórios como artefato e build da imagem |
-| [`cd.yml`](.github/workflows/cd.yml) | Merge na `main` | Roda o CI de novo → publica a imagem no GHCR (`:<sha>` e `:latest`) → deploy no Kubernetes → smoke test |
+| [`cd.yml`](.github/workflows/cd.yml) | Merge na `main` | Roda o CI de novo → publica a imagem no GHCR (`:<sha>` e `:latest`) → carrega a imagem no minikube → deploy no Kubernetes → smoke test |
 
 **Configuração do repositório:**
 
@@ -148,8 +148,17 @@ chegou a 121%.
    - `SALES_DB_PASSWORD`;
    - `INTERNAL_API_TOKEN` (o mesmo valor do serviço principal);
    - `WEBHOOK_SECRET` (entregue ao processador de pagamento).
-3. **Runner auto-hospedado** com o label `minikube`, na máquina do cluster (`minikube start` e `minikube addons enable metrics-server`).
-4. **Pacote `vehicle-sales-service` público no GHCR** depois do primeiro deploy.
+3. **Runner auto-hospedado** na máquina do cluster (Settings → Actions → Runners → New self-hosted runner → Windows x64).
+   Siga os comandos que o GitHub mostra; no `config.cmd`, informe o label adicional `minikube`. Depois, com o cluster de pé,
+   inicie o runner pelo PowerShell com o `bash` do Git no PATH (os passos do deploy usam `shell: bash`):
+   ```powershell
+   minikube start
+   minikube addons enable metrics-server
+   $env:Path = "C:\Program Files\Git\bin;" + $env:Path
+   .\run.cmd
+   ```
+   O deploy baixa a imagem do GHCR na própria máquina e a carrega no minikube (`minikube image load`), então o pacote
+   pode continuar privado.
 
 ## Variáveis de ambiente
 
